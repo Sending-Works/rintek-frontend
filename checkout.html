@@ -221,6 +221,7 @@
 
         <script>
             let selectedPaymentMethod = ''
+            !localStorage.getItem('selectedPlan') && (window.location.href = 'dashboard.html')
 
             async function processPayment() {
                 document.getElementById('loadingModal').classList.remove('hidden')

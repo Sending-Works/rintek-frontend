@@ -98,6 +98,15 @@
                 window.location.href = 'checkout.html'
             }
 
+            // localStorage.getItem('subscribed') === 'PRIBADI' && (window.location.href = 'chat/chat.html?slug=pribadi')
+
+            const handleClickCategory = (isSelectedCategory, slug) => {
+                localStorage.setItem('selectedCategory', isSelectedCategory)
+                localStorage.setItem('selectedSlug', slug)
+            }
+
+            const slugLocal = localStorage.getItem('selectedSlug')
+            localStorage.getItem('selectedCategory') === 'true' && (window.location.href = 'chat/chat.html?slug=' + slugLocal)
             !isLoggedIn && (window.location.href = 'login.html')
 
             document.addEventListener('DOMContentLoaded', async () => {
@@ -114,6 +123,10 @@
 
                     const userData = await userResponse.json()
                     const user = userData.data
+
+                    user.subscription_type === 'PRIBADI' && ((window.location.href = 'chat/chat.html?slug=pribadi'), localStorage.setItem('subscribed', user.subscription_type)),
+                        localStorage.setItem('selectedCategory', 'true'),
+                        localStorage.setItem('selectedSlug', 'pribadi')
 
                     welcomeMessage.innerHTML = ` <h1 class="text-3xl font-bold mb-2"> Selamat Datang, <span class="text-primary">${user.name}</span></h1>`
 
@@ -164,6 +177,7 @@
                         </div>
                     </div>`
                     }
+
                     if (user.subscription_type !== null) {
                         const kategoriResponse = await fetch('https://rintek-backend.vercel.app/api/kategori')
                         const kategoriData = await kategoriResponse.json()
@@ -173,7 +187,7 @@
                         kategoriData.data.forEach((cat) => {
                             if (cat.type === 'KOMUNITAS') {
                                 categoriesContainer.innerHTML += `
-                                        <div class="category-card group cursor-pointer ">
+                                        <div class="category-card group cursor-pointer " onclick="handleClickCategory('true', ${cat.slug}), window.location.href = 'chat/chat.html?slug=${cat.slug}'">
                     <div
                         class="relative w-full overflow-hidden rounded-2xl bg-gradient-to-br from-secondary to-secondary-light p-6 transition-all duration-300 group-hover:scale-105 group-hover:shadow-2xl"
                     >
@@ -227,6 +241,8 @@
                 localStorage.removeItem('isLoggedIn')
                 localStorage.removeItem('username')
                 localStorage.removeItem('id')
+                localStorage.removeItem('subscribed')
+                localStorage.removeItem('chatMessages')
                 window.location.href = 'login.html'
             })
 

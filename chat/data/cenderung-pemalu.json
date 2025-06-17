@@ -1,0 +1,32 @@
+{
+    "messages": [
+        {
+            "from": "other",
+            "sender": "Dina",
+            "text": "Sejak kecil aku memang lebih nyaman diam dan mengamati. Kadang orang salah paham dan mengira aku sombong atau tidak ramah.",
+            "time": "08:42am"
+        },
+        {
+            "from": "other",
+            "sender": "Raka",
+            "text": "Aku juga begitu. Di keramaian, aku sering merasa kewalahan dan lebih memilih menyendiri meski sebenarnya ingin berinteraksi.",
+            "time": "08:45am"
+        },
+        {
+            "from": "me",
+            "text": "Aku kira aku satu-satunya yang seperti itu. Rasanya nyaman banget bisa ketemu orang yang ngerti rasanya jadi pemalu.",
+            "time": "08:47am"
+        },
+        {
+            "from": "other",
+            "sender": "Dina",
+            "text": "Betul. Di sini aku merasa tidak perlu memaksakan diri. Kita bisa pelan-pelan belajar percaya diri bareng.",
+            "time": "08:50am"
+        },
+        {
+            "from": "me",
+            "text": "Setuju. Aku lagi coba mulai menyapa orang lebih dulu, walau sering deg-degan. Tapi aku tahu ini langkah kecil yang penting.",
+            "time": "08:52am"
+        }
+    ]
+}

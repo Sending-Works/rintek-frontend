@@ -1,0 +1,32 @@
+{
+    "messages": [
+        {
+            "from": "other",
+            "sender": "Tania",
+            "text": "Setiap kali ingin mulai ngobrol, aku malah mikir terlalu jauh. 'Nanti dia ilfeel nggak ya?' atau 'Kalau jawabannya dingin gimana?'",
+            "time": "09:01am"
+        },
+        {
+            "from": "other",
+            "sender": "Andi",
+            "text": "Rasanya relatable banget. Aku sering menyusun kata-kata di kepala berulang kali, sampai akhirnya nggak jadi ngomong sama sekali.",
+            "time": "09:04am"
+        },
+        {
+            "from": "me",
+            "text": "Sama banget. Kadang aku udah nulis chat, tapi malah dihapus lagi. Takut dianggap aneh atau ganggu.",
+            "time": "09:06am"
+        },
+        {
+            "from": "other",
+            "sender": "Tania",
+            "text": "Mungkin kita bisa mulai dari tempat aman kayak gini. Di ruang ini, kita bebas mencoba tanpa takut dihakimi.",
+            "time": "09:08am"
+        },
+        {
+            "from": "me",
+            "text": "Iya ya. Mungkin keberanian bukan soal langsung lancar, tapi soal tetap mencoba walau takut.",
+            "time": "09:10am"
+        }
+    ]
+}

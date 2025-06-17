@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Chat Room</title>
+
+        <!-- Tailwind CDN -->
+        <script src="https://cdn.tailwindcss.com"></script>
+
+        <!-- Font Awesome -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+
+        <!-- Scrollbar Styling -->
+        <style>
+            .chat-scroll::-webkit-scrollbar {
+                width: 6px;
+            }
+            .chat-scroll::-webkit-scrollbar-track {
+                background: #f1f1f1;
+            }
+            .chat-scroll::-webkit-scrollbar-thumb {
+                background: #c1c1c1;
+                border-radius: 3px;
+            }
+            .chat-scroll::-webkit-scrollbar-thumb:hover {
+                background: #a8a8a8;
+            }
+        </style>
+    </head>
+
+    <body class="bg-neutral text-gray-800">
+        <!-- Mobile Overlay -->
+        <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden md:hidden"></div>
+
+        <!-- Sidebar -->
+        <div
+            id="sidebar"
+            class="fixed z-40 h-screen left-0 w-64 bg-white shadow-md flex flex-col justify-between transform -translate-x-full md:translate-x-0 transition-transform duration-300"
+        >
+            <div>
+                <div class="flex items-center justify-between h-16 px-4 bg-primary">
+                    <h1 class="text-xl font-bold text-white">Dashboard</h1>
+                    <button id="closeSidebar" class="md:hidden text-white hover:text-gray-200">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <nav class="mt-8">
+                    <div class="px-4 space-y-4">
+                        <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-700 shadow-md hover:shadow-xl rounded-lg bg-primary text-white">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </div>
+                </nav>
+            </div>
+            <div class="px-4 mb-4">
+                <a
+                    href="/"
+                    class="flex items-center gap-3 px-4 py-3 text-gray-700 shadow-md hover:shadow-xl rounded-lg hover:bg-secondary hover:text-white transition"
+                    id="logoutButton"
+                >
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Chat Room -->
+        <div class="ml-0 md:ml-64 flex flex-col h-screen">
+            <!-- Header -->
+            <div class="bg-white shadow px-4 md:px-6 py-4 flex items-center justify-between border-b">
+                <button id="hamburger" class="md:hidden text-gray-700 hover:text-gray-900">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                <h2 class="text-lg md:text-xl font-semibold text-gray-800">Project Team Chat</h2>
+            </div>
+
+            <!-- Messages -->
+            <div id="chatMessages" class="flex-1 overflow-y-auto p-2 md:p-4 space-y-3 md:space-y-4 bg-gray-50 chat-scroll"></div>
+
+            <!-- Input -->
+            <div class="bg-white p-2 md:p-4 border-t">
+                <form id="chatForm" class="flex gap-2 md:gap-3 items-end">
+                    <input
+                        id="chatInput"
+                        type="text"
+                        placeholder="Type a message..."
+                        required
+                        class="flex-1 w-full border border-gray-300 rounded-full px-3 md:px-4 py-2 md:py-3 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    />
+                    <button
+                        type="submit"
+                        class="bg-primary text-white px-3 md:px-6 py-2 md:py-3 rounded-full hover:bg-primary-dark transition duration-200 flex items-center gap-1 md:gap-2 text-sm md:text-base"
+                    >
+                        <i class="fas fa-paper-plane text-sm"></i>
+                        <span class="hidden sm:inline">Send</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Config + Script -->
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: '#87ceeb',
+                            'primary-dark': '#6bb6d6',
+                            'primary-light': '#a5d8ed',
+                            secondary: '#ffc0cb',
+                            'secondary-dark': '#ffb6c1',
+                            'secondary-light': '#ffcccb',
+                            neutral: '#f7f9fc',
+                        },
+                    },
+                },
+            }
+        </script>
+
+        <script defer>
+            const chatForm = document.getElementById('chatForm')
+            const chatInput = document.getElementById('chatInput')
+            const chatMessages = document.getElementById('chatMessages')
+            const chatTitle = document.querySelector('h2')
+            !localStorage.getItem('selectedCategory') && (window.location.href = '/dashboard.html')
+
+            const params = new URLSearchParams(window.location.search)
+            const slug = params.get('slug')
+            let messages = []
+            let roomName = 'Chat Room'
+
+            document.getElementById('logoutButton')?.addEventListener('click', () => {
+                ;['isLoggedIn', 'username', 'id', 'subscribed', 'chatMessages', 'selectedSlug', 'selectedCategory'].forEach((key) => localStorage.removeItem(key))
+                window.location.href = 'login.html'
+            })
+
+            async function loadRoomData() {
+                if (!slug) {
+                    messages = [
+                        { from: 'other', sender: 'Grace Harper', text: "Hey, what's the update?", time: '10:31pm' },
+                        { from: 'other', sender: 'Chris Pearce', text: 'Steady progress. We’re on track.', time: '10:33pm' },
+                        { from: 'me', text: 'Great. Full report Monday.', time: '10:45pm' },
+                    ]
+                    localStorage.setItem('chatMessages', JSON.stringify(messages))
+                    return renderMessages()
+                }
+
+                try {
+                    const res = await fetch(`https://rintek-backend.vercel.app/api/kategori/slug/${slug}`)
+                    const { data } = await res.json()
+                    roomName = data?.room_name || 'Tanpa Nama'
+
+                    const allMessages = JSON.parse(localStorage.getItem('chatMessages')) || {}
+                    messages = allMessages[slug] || data?.messages || []
+                } catch (err) {
+                    console.warn('Gagal load data room:', err)
+                    messages = []
+                }
+
+                chatTitle.textContent = roomName
+                renderMessages()
+            }
+
+            function getTime() {
+                const now = new Date()
+                const hours = now.getHours()
+                const minutes = now.getMinutes()
+                const ampm = hours >= 12 ? 'pm' : 'am'
+                const displayHours = hours % 12 || 12
+                return `${displayHours}:${minutes.toString().padStart(2, '0')}${ampm}`
+            }
+
+            async function restoreChatToLocalStorage() {
+                try {
+                    const res = await fetch(`data/${slug}.json`)
+                    const data = await res.json()
+                    if (data?.messages) {
+                        const allMessages = JSON.parse(localStorage.getItem('chatMessages')) || {}
+                        allMessages[slug] = data.messages
+                        localStorage.setItem('chatMessages', JSON.stringify(allMessages))
+                        console.log(`Pesan dari "${slug}" berhasil disimpan dalam chatMessages 🎉`)
+                    } else {
+                        console.warn('Data pesan tidak ditemukan dalam file.')
+                    }
+                } catch (err) {
+                    console.error('Gagal memuat file JSON:', err)
+                }
+            }
+
+            restoreChatToLocalStorage()
+
+            function renderMessages() {
+                chatMessages.innerHTML = ''
+                messages.forEach((msg) => {
+                    const wrapper = document.createElement('div')
+                    wrapper.className = `flex items-end gap-2 ${msg.from === 'me' ? 'justify-end' : 'justify-start'}`
+
+                    const avatar = document.createElement('div')
+                    avatar.className = `w-8 h-8 flex items-center justify-center rounded-full text-white text-xl flex-shrink-0 ${msg.from === 'me' ? 'bg-primary' : 'bg-secondary'}`
+                    avatar.innerHTML = '<i class="fas fa-user-circle"></i>'
+
+                    const container = document.createElement('div')
+                    container.className = `flex flex-col ${msg.from === 'me' ? 'items-end' : 'items-start'} max-w-xs sm:max-w-sm md:max-w-md`
+
+                    if (msg.from !== 'me') {
+                        const sender = document.createElement('div')
+                        sender.className = 'text-xs font-medium text-gray-600 mb-1 px-2'
+                        sender.textContent = msg.sender
+                        container.appendChild(sender)
+                    }
+
+                    const bubble = document.createElement('div')
+                    bubble.className = `rounded-2xl px-3 md:px-4 py-2 md:py-3 break-words text-sm md:text-base ${
+                        msg.from === 'me' ? 'bg-blue-500 text-white rounded-br-sm' : 'bg-white text-gray-800 rounded-bl-sm shadow-sm border'
+                    }`
+                    bubble.textContent = msg.text
+
+                    const time = document.createElement('div')
+                    time.className = `text-xs text-gray-400 mt-1 px-2 ${msg.from === 'me' ? 'text-right' : 'text-left'}`
+                    time.textContent = msg.time
+
+                    container.appendChild(bubble)
+                    container.appendChild(time)
+
+                    if (msg.from === 'me') {
+                        wrapper.appendChild(container)
+                        wrapper.appendChild(avatar)
+                    } else {
+                        wrapper.appendChild(avatar)
+                        wrapper.appendChild(container)
+                    }
+
+                    chatMessages.appendChild(wrapper)
+                })
+
+                chatMessages.scrollTop = chatMessages.scrollHeight
+            }
+
+            chatForm.addEventListener('submit', (e) => {
+                e.preventDefault()
+                const text = chatInput.value.trim()
+                if (text) {
+                    const newMsg = { from: 'me', text, time: getTime() }
+                    messages.push(newMsg)
+                    const allMessages = JSON.parse(localStorage.getItem('chatMessages')) || {}
+                    allMessages[slug || 'default'] = messages
+                    localStorage.setItem('chatMessages', JSON.stringify(allMessages))
+                    chatInput.value = ''
+                    renderMessages()
+                    autoRespond()
+                }
+            })
+
+            function autoRespond() {
+                const responses = [
+                    { sender: 'Grace Harper', text: 'Thanks for the update!' },
+                    { sender: 'Chris Pearce', text: 'Noted!' },
+                    { sender: 'Grace Harper', text: 'Ping me if needed.' },
+                ]
+                if (Math.random() < 0.3) {
+                    setTimeout(() => {
+                        const r = responses[Math.floor(Math.random() * responses.length)]
+                        messages.push({ from: 'other', sender: r.sender, text: r.text, time: getTime() })
+                        const allMessages = JSON.parse(localStorage.getItem('chatMessages')) || {}
+                        allMessages[slug || 'default'] = messages
+                        localStorage.setItem('chatMessages', JSON.stringify(allMessages))
+                        renderMessages()
+                    }, 2000 + Math.random() * 3000)
+                }
+            }
+
+            loadRoomData()
+
+            // Sidebar Toggle
+            const hamburger = document.getElementById('hamburger')
+            const sidebar = document.getElementById('sidebar')
+            const closeSidebar = document.getElementById('closeSidebar')
+            const overlay = document.getElementById('overlay')
+
+            function closeSidebarFunc() {
+                sidebar.classList.add('-translate-x-full')
+                overlay.classList.add('hidden')
+                document.body.style.overflow = 'auto'
+            }
+
+            hamburger.addEventListener('click', () => {
+                sidebar.classList.remove('-translate-x-full')
+                overlay.classList.remove('hidden')
+                document.body.style.overflow = 'hidden'
+            })
+
+            closeSidebar.addEventListener('click', closeSidebarFunc)
+            overlay.addEventListener('click', closeSidebarFunc)
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 768) closeSidebarFunc()
+            })
+        </script>
+    </body>
+</html>

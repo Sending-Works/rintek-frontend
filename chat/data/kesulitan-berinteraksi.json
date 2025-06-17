@@ -1,0 +1,32 @@
+{
+    "messages": [
+        {
+            "from": "other",
+            "sender": "Rina",
+            "text": "Aku sering bingung saat ngobrol. Kadang orang tertawa, tapi aku nggak tahu harus bagaimana merespons.",
+            "time": "09:20am"
+        },
+        {
+            "from": "other",
+            "sender": "Fikri",
+            "text": "Aku juga gitu. Kadang rasanya kayak ada 'kode sosial' yang nggak aku pahami. Setelah ngobrol, aku malah overthinking semalaman.",
+            "time": "09:22am"
+        },
+        {
+            "from": "me",
+            "text": "Aku sering ngerasa canggung, apalagi kalau tiba-tiba harus basa-basi. Rasanya lebih mudah kalau ada skrip-nya.",
+            "time": "09:24am"
+        },
+        {
+            "from": "other",
+            "sender": "Rina",
+            "text": "Di tempat kerja, kadang aku diam saja. Bukan karena nggak mau ngomong, tapi takut salah bicara.",
+            "time": "09:27am"
+        },
+        {
+            "from": "me",
+            "text": "Terima kasih udah berbagi. Dengan ngobrol kayak gini, aku jadi sadar kita nggak sendirian dan masih bisa belajar bareng-bareng.",
+            "time": "09:29am"
+        }
+    ]
+}

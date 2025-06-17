@@ -1,0 +1,32 @@
+{
+    "messages": [
+        {
+            "from": "other",
+            "sender": "Nadya",
+            "text": "Beberapa hari ini aku merasa aneh. Seperti ada yang hilang dalam diri, tapi aku sendiri nggak tahu apa.",
+            "time": "06:12am"
+        },
+        {
+            "from": "other",
+            "sender": "Ilham",
+            "text": "Aku ngerti perasaan itu. Kadang semuanya terlihat baik di luar, tapi dalam hati rasanya kosong dan bingung.",
+            "time": "06:15am"
+        },
+        {
+            "from": "me",
+            "text": "Aku sering merasa capek bukan karena fisik, tapi karena banyak hal yang kupendam sendiri. Di sini setidaknya aku bisa menuliskan semuanya.",
+            "time": "06:18am"
+        },
+        {
+            "from": "other",
+            "sender": "Nadya",
+            "text": "Terima kasih sudah jujur. Kadang butuh keberanian besar untuk sekadar mengakui kelelahan kita, terutama pada diri sendiri.",
+            "time": "06:20am"
+        },
+        {
+            "from": "me",
+            "text": "Aku mencoba pelan-pelan berdamai dengan diriku sendiri. Menerima bahwa nggak apa-apa kalau aku belum tahu semuanya sekarang.",
+            "time": "06:23am"
+        }
+    ]
+}
