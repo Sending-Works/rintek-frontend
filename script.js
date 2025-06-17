@@ -112,6 +112,11 @@ document.addEventListener('DOMContentLoaded', () => {
             menuToggle.classList.toggle('active')
         })
     }
+
+    const isLoggedIn = localStorage.getItem('isLoggedIn')
+    const username = localStorage.getItem('username')
+    isLoggedIn ? (document.querySelector('.login-btn').textContent = username) : (document.querySelector('.login-btn').textContent = 'Login')
+    isLoggedIn ? (document.querySelector('.login-btn').href = 'dashboard.html') : (document.querySelector('.login-btn').href = 'login.html')
     // End Burger Menu Toggle
 })
 
