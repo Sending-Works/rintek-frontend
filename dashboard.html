@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Dashboard - Subscription</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: '#87CEEB',
+                            'primary-dark': '#6BB6D6',
+                            'primary-light': '#A5D8ED',
+                            secondary: '#FFC0CB',
+                            'secondary-dark': '#FFB6C1',
+                            'secondary-light': '#FFCCCB',
+                            neutral: '#f7f9fc',
+                        },
+                        fontFamily: {
+                            sans: ['Inter', 'sans-serif'],
+                        },
+                    },
+                },
+            }
+        </script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    </head>
+    <body class="bg-neutral font-sans text-gray-800">
+        <!-- Toggle Sidebar Button (Mobile) -->
+        <button id="sidebarToggle" class="md:hidden fixed top-4 left-4 z-50 bg-primary text-white p-2 rounded-md shadow-lg">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Backdrop -->
+        <div id="sidebarBackdrop" class="fixed inset-0 bg-black bg-opacity-40 z-30 hidden md:hidden"></div>
+
+        <!-- Sidebar -->
+        <div
+            id="sidebar"
+            class="fixed z-40 h-screen left-0 w-64 bg-white shadow-md flex flex-col justify-between transform -translate-x-full md:translate-x-0 transition-transform duration-300"
+        >
+            <div>
+                <div class="flex items-center justify-center h-16 bg-primary">
+                    <h1 class="text-xl font-bold text-white">Dashboard</h1>
+                </div>
+                <nav class="mt-8">
+                    <div class="px-4 space-y-4">
+                        <a
+                            href="#"
+                            class="flex items-center gap-3 px-4 py-3 text-gray-700 shadow-md hover:shadow-xl rounded-lg bg-primary hover:bg-primary-dark hover:text-white transition"
+                        >
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </div>
+                </nav>
+            </div>
+
+            <div class="px-4 mb-4">
+                <a
+                    href="login.html"
+                    class="flex items-center gap-3 px-4 py-3 text-gray-700 shadow-md hover:shadow-xl rounded-lg hover:bg-secondary hover:text-white transition text"
+                    id="logoutButton"
+                >
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="md:ml-64 min-h-screen">
+            <div class="p-10">
+                <div class="mb-10 mt-6 md:mt-0" id="welcomeMessage">
+                    <p class="text-gray-600 text-lg">Pilih paket berlangganan sesuai kebutuhanmu</p>
+                </div>
+
+                <!-- Cards -->
+                <div class="grid md:grid-cols-2 gap-8" id="Package"></div>
+
+                <!-- category -->
+                <div class="mt-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="categories"></div>
+            </div>
+        </div>
+
+        <!-- JavaScript -->
+        <script>
+            const isLoggedIn = localStorage.getItem('isLoggedIn')
+
+            const welcomeMessage = document.getElementById('welcomeMessage')
+
+            const selectedPlan = (plan) => {
+                localStorage.setItem('selectedPlan', plan)
+                window.location.href = 'checkout.html'
+            }
+
+            !isLoggedIn && (window.location.href = 'login.html')
+
+            document.addEventListener('DOMContentLoaded', async () => {
+                const userId = localStorage.getItem('id')
+                const welcomeMessage = document.getElementById('welcomeMessage')
+                const packageContainer = document.getElementById('Package')
+                const categoriesContainer = document.getElementById('categories')
+
+                if (!userId || !welcomeMessage || !packageContainer) return
+
+                try {
+                    const userResponse = await fetch(`https://rintek-backend.vercel.app/api/users/${userId}`)
+                    if (!userResponse.ok) throw new Error('Gagal mengambil data pengguna')
+
+                    const userData = await userResponse.json()
+                    const user = userData.data
+
+                    welcomeMessage.innerHTML = ` <h1 class="text-3xl font-bold mb-2"> Selamat Datang, <span class="text-primary">${user.name}</span></h1>`
+
+                    if (user.subscription_type === null) {
+                        const kategoriResponse = await fetch('https://rintek-backend.vercel.app/api/kategori')
+                        const kategoriData = await kategoriResponse.json()
+
+                        packageContainer.innerHTML = ''
+
+                        kategoriData.data.forEach((cat) => {
+                            const isPribadi = cat.type === 'PRIBADI'
+                            const bgGradient = isPribadi ? 'from-primary to-primary-dark' : 'from-secondary to-secondary-dark'
+                            const iconClass = isPribadi ? 'fa-user' : 'fa-users'
+                            const title = isPribadi ? 'Paket Personal' : 'Paket Komunitas'
+                            const desc = isPribadi ? 'Untuk kebutuhan individu' : 'Untuk kebutuhan komunitas'
+                            const harga = isPribadi ? 'Rp 99.000' : 'Rp 249.000'
+                            const planType = isPribadi ? 'Personal' : 'Komunitas'
+                            const buttonClass = isPribadi ? 'bg-primary hover:bg-primary-dark' : 'bg-secondary hover:bg-secondary-dark'
+
+                            packageContainer.innerHTML += `
+              <div class="bg-white rounded-2xl border shadow-sm hover:shadow-xl transition flex flex-col">
+                <div class="bg-gradient-to-r ${bgGradient} p-6 rounded-t-2xl">
+                  <div class="flex justify-between items-center">
+                    <div>
+                      <h3 class="text-lg font-semibold text-white">${title}</h3>
+                      <p class="text-white text-sm">${desc}</p>
+                    </div>
+                    <i class="fas ${iconClass} text-white text-2xl opacity-80"></i>
+                  </div>
+                </div>
+
+                <div class="p-6 flex flex-col flex-1">
+                  <h1 class="mb-3 font-bold text-gray-700 text-xl">${cat.name}</h1>
+                  <div class="text-3xl font-bold text-gray-800 mb-6">${harga} <span class="text-base font-normal text-gray-500">/bulan</span></div>
+                  <p class="mb-4">${cat.room_desc}</p>
+                  <button
+                    onclick="selectedPlan('${planType}')"
+                    class="mt-auto w-full ${buttonClass} text-white font-semibold py-3 rounded-xl transition"
+                  >
+                    Pilih Paket ${planType}
+                  </button>
+                </div>
+              </div>
+            `
+                        })
+                    }
+                    if (user.subscription_type !== null) {
+                        const kategoriResponse = await fetch('https://rintek-backend.vercel.app/api/kategori')
+                        const kategoriData = await kategoriResponse.json()
+
+                        categoriesContainer.innerHTML = ''
+
+                        kategoriData.data.forEach((cat) => {
+                            if (cat.type === 'KOMUNITAS') {
+                                categoriesContainer.innerHTML += `
+                                        <div class="category-card group cursor-pointer">
+                    <div
+                        class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-secondary to-secondary-light p-6 transition-all duration-300 group-hover:scale-105 group-hover:shadow-2xl"
+                    >
+                        <div class="absolute inset-0 bg-black/5 group-hover:bg-black/10 transition-colors duration-300"></div>
+                        <div class="relative z-10 flex flex-col justify-between h-full gap-4">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                            <i class="${cat.icon} text-white"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-white mb-2">${cat.name}</h3>
+                            <p class="text-white/80 text-sm">${cat.room_desc}</p>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                    `
+                            }
+                        })
+                    }
+                } catch (error) {
+                    console.error(error.message)
+                }
+            })
+
+            // Toggle Sidebar (Mobile)
+            const toggleBtn = document.getElementById('sidebarToggle')
+            const sidebar = document.getElementById('sidebar')
+            const backdrop = document.getElementById('sidebarBackdrop')
+
+            const toggleSidebar = () => {
+                const isMobile = window.innerWidth < 768
+                if (!isMobile) return // jangan toggle kalau desktop
+
+                sidebar.classList.toggle('-translate-x-full')
+                backdrop.style.display = sidebar.classList.contains('-translate-x-full') ? 'none' : 'block'
+            }
+
+            toggleBtn?.addEventListener('click', toggleSidebar)
+            backdrop?.addEventListener('click', toggleSidebar)
+
+            // Reset sidebar saat resize ke desktop
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 768) {
+                    sidebar.classList.remove('-translate-x-full')
+                    backdrop.style.display = 'none'
+                }
+            })
+
+            const logoutButton = document.getElementById('logoutButton')
+            logoutButton?.addEventListener('click', () => {
+                localStorage.removeItem('isLoggedIn')
+                localStorage.removeItem('username')
+                localStorage.removeItem('id')
+                window.location.href = 'login.html'
+            })
+
+            document.querySelectorAll('.category-card').forEach((card) => {
+                card.addEventListener('click', function () {
+                    const categoryName = this.querySelector('h3').textContent
+                    console.log(`Kategori ${categoryName} dipilih`)
+
+                    const ripple = document.createElement('div')
+                    ripple.className = 'absolute inset-0 bg-white/20 rounded-2xl opacity-0 pointer-events-none'
+                    this.querySelector('.relative').appendChild(ripple)
+
+                    ripple.style.animation = 'ripple 0.6s ease-out'
+
+                    setTimeout(() => {
+                        ripple.remove()
+                    }, 600)
+                })
+            })
+
+            // Add CSS for ripple animation
+            const style = document.createElement('style')
+            style.textContent = `
+                @keyframes ripple {
+                    0% { opacity: 0; transform: scale(0.8); }
+                    50% { opacity: 1; transform: scale(1.05); }
+                    100% { opacity: 0; transform: scale(1); }
+                }
+            `
+            document.head.appendChild(style)
+        </script>
+    </body>
+</html>
