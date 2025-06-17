@@ -82,7 +82,7 @@
                 <div class="grid md:grid-cols-2 gap-8" id="Package"></div>
 
                 <!-- category -->
-                <div class="mt-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="categories"></div>
+                <div class="mt-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="categories"></div>
             </div>
         </div>
 
@@ -93,6 +93,7 @@
             const welcomeMessage = document.getElementById('welcomeMessage')
 
             const selectedPlan = (plan) => {
+                plan = plan.toUpperCase()
                 localStorage.setItem('selectedPlan', plan)
                 window.location.href = 'checkout.html'
             }
@@ -117,47 +118,51 @@
                     welcomeMessage.innerHTML = ` <h1 class="text-3xl font-bold mb-2"> Selamat Datang, <span class="text-primary">${user.name}</span></h1>`
 
                     if (user.subscription_type === null) {
-                        const kategoriResponse = await fetch('https://rintek-backend.vercel.app/api/kategori')
-                        const kategoriData = await kategoriResponse.json()
+                        packageContainer.innerHTML = `
+                        <!-- Paket Personal -->
+                    <div class="bg-white rounded-2xl border shadow-sm hover:shadow-xl transition flex flex-col">
+                        <div class="bg-gradient-to-r from-primary to-primary-dark p-6 rounded-t-2xl">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white">Paket Personal</h3>
+                                    <p class="text-white text-sm">Untuk kebutuhan individu</p>
+                                </div>
+                                <i class="fas fa-user text-white text-2xl opacity-80"></i>
+                            </div>
+                        </div>
 
-                        packageContainer.innerHTML = ''
-
-                        kategoriData.data.forEach((cat) => {
-                            const isPribadi = cat.type === 'PRIBADI'
-                            const bgGradient = isPribadi ? 'from-primary to-primary-dark' : 'from-secondary to-secondary-dark'
-                            const iconClass = isPribadi ? 'fa-user' : 'fa-users'
-                            const title = isPribadi ? 'Paket Personal' : 'Paket Komunitas'
-                            const desc = isPribadi ? 'Untuk kebutuhan individu' : 'Untuk kebutuhan komunitas'
-                            const harga = isPribadi ? 'Rp 99.000' : 'Rp 249.000'
-                            const planType = isPribadi ? 'Personal' : 'Komunitas'
-                            const buttonClass = isPribadi ? 'bg-primary hover:bg-primary-dark' : 'bg-secondary hover:bg-secondary-dark'
-
-                            packageContainer.innerHTML += `
-              <div class="bg-white rounded-2xl border shadow-sm hover:shadow-xl transition flex flex-col">
-                <div class="bg-gradient-to-r ${bgGradient} p-6 rounded-t-2xl">
-                  <div class="flex justify-between items-center">
-                    <div>
-                      <h3 class="text-lg font-semibold text-white">${title}</h3>
-                      <p class="text-white text-sm">${desc}</p>
+                        <div class="p-6 flex flex-col flex-1">
+                            <div class="text-3xl font-bold text-gray-800 mb-6">Rp 50.000 <span class="text-base font-normal text-gray-500">/bulan</span></div>
+                            <p class="mb-4">Akses terbatas untuk 1 pengguna. Cocok untuk individu yang ingin belajar dan berkembang.</p>
+                            <button onclick="selectedPlan('PRIBADI')" class="mt-auto w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3 rounded-xl transition">
+                                Pilih Paket Personal
+                            </button>
+                        </div>
                     </div>
-                    <i class="fas ${iconClass} text-white text-2xl opacity-80"></i>
-                  </div>
-                </div>
 
-                <div class="p-6 flex flex-col flex-1">
-                  <h1 class="mb-3 font-bold text-gray-700 text-xl">${cat.name}</h1>
-                  <div class="text-3xl font-bold text-gray-800 mb-6">${harga} <span class="text-base font-normal text-gray-500">/bulan</span></div>
-                  <p class="mb-4">${cat.room_desc}</p>
-                  <button
-                    onclick="selectedPlan('${planType}')"
-                    class="mt-auto w-full ${buttonClass} text-white font-semibold py-3 rounded-xl transition"
-                  >
-                    Pilih Paket ${planType}
-                  </button>
-                </div>
-              </div>
-            `
-                        })
+                    <!-- Paket Komunitas -->
+                    <div class="bg-white rounded-2xl border shadow-sm hover:shadow-xl transition flex flex-col">
+                        <div class="bg-gradient-to-r from-secondary to-secondary-dark p-6 rounded-t-2xl">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white">Paket Komunitas</h3>
+                                    <p class="text-white text-sm">Untuk kebutuhan komunitas</p>
+                                </div>
+                                <i class="fas fa-users text-white text-2xl opacity-80"></i>
+                            </div>
+                        </div>
+
+                        <div class="p-6 flex flex-col flex-1">
+                            <div class="text-3xl font-bold text-gray-800 mb-6">Rp 30.000 <span class="text-base font-normal text-gray-500">/bulan</span></div>
+                            <p class="mb-4">Akses premium untuk tim atau komunitas hingga 10 pengguna. Termasuk fitur kolaborasi dan manajemen anggota.</p>
+                            <button
+                                onclick="selectedPlan('KOMUNITAS')"
+                                class="mt-auto w-full bg-secondary hover:bg-secondary-dark text-white font-semibold py-3 rounded-xl transition"
+                            >
+                                Pilih Paket Komunitas
+                            </button>
+                        </div>
+                    </div>`
                     }
                     if (user.subscription_type !== null) {
                         const kategoriResponse = await fetch('https://rintek-backend.vercel.app/api/kategori')
@@ -168,9 +173,9 @@
                         kategoriData.data.forEach((cat) => {
                             if (cat.type === 'KOMUNITAS') {
                                 categoriesContainer.innerHTML += `
-                                        <div class="category-card group cursor-pointer">
+                                        <div class="category-card group cursor-pointer ">
                     <div
-                        class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-secondary to-secondary-light p-6 transition-all duration-300 group-hover:scale-105 group-hover:shadow-2xl"
+                        class="relative w-full overflow-hidden rounded-2xl bg-gradient-to-br from-secondary to-secondary-light p-6 transition-all duration-300 group-hover:scale-105 group-hover:shadow-2xl"
                     >
                         <div class="absolute inset-0 bg-black/5 group-hover:bg-black/10 transition-colors duration-300"></div>
                         <div class="relative z-10 flex flex-col justify-between h-full gap-4">
@@ -200,7 +205,7 @@
 
             const toggleSidebar = () => {
                 const isMobile = window.innerWidth < 768
-                if (!isMobile) return // jangan toggle kalau desktop
+                if (!isMobile) return
 
                 sidebar.classList.toggle('-translate-x-full')
                 backdrop.style.display = sidebar.classList.contains('-translate-x-full') ? 'none' : 'block'
@@ -242,7 +247,6 @@
                 })
             })
 
-            // Add CSS for ripple animation
             const style = document.createElement('style')
             style.textContent = `
                 @keyframes ripple {
