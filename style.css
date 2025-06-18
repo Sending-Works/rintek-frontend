@@ -170,7 +170,6 @@ a:hover {
     .login-btn {
         position: absolute;
         right: 15px;
-        z-index: 999;
     }
 }
 
