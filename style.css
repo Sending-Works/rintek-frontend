@@ -139,7 +139,6 @@ a:hover {
     width: 100%;
 }
 
-/* CTA Button */
 .login-btn {
     background-color: var(--primary-color);
     color: white;
@@ -162,19 +161,36 @@ a:hover {
         position: relative;
     }
 
+    .main-header .container {
+        display: flex;
+        justify-content: space-between; /* logo kiri, group kanan */
+        align-items: center;
+        padding: 0.5rem 1rem;
+    }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem; /* jarak antara hamburger dan login */
+    }
+
+    .menu-toggle,
+    .login-btn {
+        position: static; /* jangan gunakan sticky/absolute */
+    }
+
     .menu-toggle {
         position: sticky;
-        right: 100px;
+        right: 15px;
     }
 
     .login-btn {
-        position: absolute;
-        right: 15px;
+        position: sticky;
     }
 }
 
 .menu-toggle {
-    display: none; /* Hidden by default, shown on mobile */
+    display: none;
     background: none;
     border: none;
     font-size: 1.8em;

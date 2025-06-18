@@ -40,7 +40,7 @@
         <!-- Sidebar -->
         <div
             id="sidebar"
-            class="fixed z-40 h-screen left-0 w-64 bg-white shadow-md flex flex-col justify-between transform -translate-x-full md:translate-x-0 transition-transform duration-300"
+            class="fixed z-40 h-full left-0 w-64 bg-white shadow-md flex flex-col justify-between transform -translate-x-full md:translate-x-0 transition-transform duration-300"
         >
             <div>
                 <div class="flex items-center justify-center h-16 bg-primary">
@@ -97,8 +97,6 @@
                 localStorage.setItem('selectedPlan', plan)
                 window.location.href = 'checkout.html'
             }
-
-            // localStorage.getItem('subscribed') === 'PRIBADI' && (window.location.href = 'chat/chat.html?slug=pribadi')
 
             const handleClickCategory = (isSelectedCategory, slug) => {
                 localStorage.setItem('selectedCategory', isSelectedCategory)

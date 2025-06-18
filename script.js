@@ -135,23 +135,26 @@ document.getElementById('modal')?.addEventListener('click', (e) => {
     if (e.target.id === 'modal') closeModal()
 })
 
-function showLoading() {
-    toggleLoading(true)
+function showLoading(mode) {
+    toggleLoading(true, mode)
 }
 
-function hideLoading() {
-    toggleLoading(false)
+function hideLoading(mode) {
+    toggleLoading(false, mode)
 }
 
-function toggleLoading(show) {
-    const btn = document.getElementById('loginButton')
+function toggleLoading(show, mode) {
+    const btnLog = document.getElementById('loginButton')
+    const btnReg = document.getElementById('registerButton')
     const text = document.getElementById('buttonText')
     const loading = document.getElementById('loadingText')
     const overlay = document.getElementById('loadingOverlay')
-    const user = document.getElementById('loginUsername')
-    const pass = document.getElementById('loginPassword')
+    const userLog = document.getElementById('loginUsername')
+    const passLog = document.getElementById('loginPassword')
+    const userReg = document.getElementById('registerUsername')
+    const passReg = document.getElementById('registerPassword')
+    const confirmPass = document.getElementById('confirmPassword')
 
-    btn.disabled = show
     if (show) {
         text.classList.add('hidden')
         loading.classList.remove('hidden')
@@ -161,8 +164,17 @@ function toggleLoading(show) {
         loading.classList.add('hidden')
         overlay.classList.replace('flex', 'hidden')
     }
-    user.disabled = show
-    pass.disabled = show
+
+    if (mode === 'login') {
+        btnLog.disabled = show
+        userLog.disabled = show
+        passLog.disabled = show
+    } else if (mode === 'register') {
+        btnReg.disabled = show
+        userReg.disabled = show
+        passReg.disabled = show
+        confirmPass.disabled = show
+    }
 }
 
 // ==== Login & Register ====
@@ -181,7 +193,7 @@ if (loginForm) {
         const username = loginForm['loginUsername'].value
         const password = loginForm['loginPassword'].value
 
-        showLoading()
+        showLoading('login')
         fetch('https://rintek-backend.vercel.app/api/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -189,7 +201,7 @@ if (loginForm) {
         })
             .then((res) => (res.ok ? res.json() : Promise.reject()))
             .then((data) => {
-                hideLoading()
+                hideLoading('login')
                 localStorage.setItem('isLoggedIn', 'true')
                 localStorage.setItem('username', username)
                 localStorage.setItem('id', data.data.id)
@@ -197,7 +209,7 @@ if (loginForm) {
                 setTimeout(() => (location.href = 'dashboard.html'), 1500)
             })
             .catch(() => {
-                hideLoading()
+                hideLoading('login')
                 showModal('error', 'Error!', 'Username atau password salah. Silakan coba lagi.')
             })
     }
@@ -232,14 +244,19 @@ if (registerForm) {
 
         if (pass.value !== confirm.value) return showModal('error', 'Error!', 'Password dan konfirmasi password tidak cocok.')
 
+        showLoading('register')
         fetch('https://rintek-backend.vercel.app/api/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: username, password: pass.value }),
         })
             .then((res) => (res.ok ? res.json() : Promise.reject()))
-            .then(() => showModal('success', 'Registrasi Berhasil!', `Akun ${username} telah dibuat. Silakan login.`))
-            .catch(() => showModal('error', 'Error!', 'Terjadi kesalahan saat membuat akun. Silakan coba lagi.'))
+            .then(() => {
+                showModal('success', 'Registrasi Berhasil!', `Akun ${username} telah dibuat. Silakan login.`), hideLoading('register')
+            })
+            .catch(() => {
+                showModal('error', 'Error!', 'Terjadi kesalahan saat membuat akun. Silakan coba lagi.'), hideLoading('register')
+            })
     }
 }
 
