@@ -226,6 +226,10 @@ if (registerForm) {
     registerForm.onsubmit = (e) => {
         e.preventDefault()
         const username = registerForm['registerUsername'].value
+        if (username !== username.toLowerCase()) {
+            return showModal('error', 'Error!', 'Username hanya boleh menggunakan huruf kecil.')
+        }
+
         if (pass.value !== confirm.value) return showModal('error', 'Error!', 'Password dan konfirmasi password tidak cocok.')
 
         fetch('https://rintek-backend.vercel.app/api/auth/register', {
