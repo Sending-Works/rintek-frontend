@@ -125,7 +125,6 @@
             const chatMessages = document.getElementById('chatMessages')
             const chatTitle = document.querySelector('h2')
             !localStorage.getItem('selectedCategory') && (window.location.href = '/dashboard.html')
-
             const params = new URLSearchParams(window.location.search)
             const slug = params.get('slug')
             let messages = []

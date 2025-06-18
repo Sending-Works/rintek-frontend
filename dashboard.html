@@ -173,7 +173,6 @@
                                     }
                                 })
 
-                                // --- KOMUNITAS (satu card, banyak fitur) ---
                                 const komunitasItems = subscriptionData
                                     .filter((item) => item.type === 'KOMUNITAS')
                                     .map((item) => `<span class="list-disc  text-gray-700">${item.name}</span>`)
@@ -227,7 +226,8 @@
                         kategoriData.data.forEach((cat) => {
                             if (cat.type === 'KOMUNITAS') {
                                 categoriesContainer.innerHTML += `
-                                        <div class="category-card group cursor-pointer " onclick="handleClickCategory('true', ${cat.slug}), window.location.href = 'chat/chat.html?slug=${cat.slug}'">
+                                        <div class="category-card group cursor-pointer " onclick="handleClickCategory('true', '${cat.slug}'); window.location.href = 'chat/chat.html?slug=${cat.slug}'"
+>
                     <div
                         class="relative w-full overflow-hidden rounded-2xl bg-gradient-to-br from-secondary to-secondary-light p-6 transition-all duration-300 group-hover:scale-105 group-hover:shadow-2xl"
                     >
